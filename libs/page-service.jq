@@ -184,7 +184,7 @@ else
         action: . | action,
         collection: (.action.type == "Overflow" and (. | metadata("has_badge") == "true")),
         image: .imagePath | image($tileSize),
-        meta: "",
+        meta: . | superMeta,
         description: (( .| metadata("description")) // .subTitle // ""),
         app: (if .badgePath then .badgePath | image({w: 70, h: 26}) else null end),
         preview: (if $isDiscover then null else . | metadata("heroVideo") end),

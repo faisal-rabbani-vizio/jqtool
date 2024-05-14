@@ -1,5 +1,5 @@
 def getYear:
-  . | tostring | strptime("%M/%d/%Y") | mktime | strftime("%Y");
+  . | strptime("%M/%d/%Y") | mktime | strftime("%Y");
 
 def metadata(f):
   .metadata | map(select(.key == f))[0].value;
@@ -12,14 +12,14 @@ def duration:
 
 def meta:
   [
-   (. | metadata("release_date")? | getYear),
+   (. | metadata("release_date") | if . == null then null else . | getYear end),
    (. | metadata("production_rating")),
-   (. | metadata("duration_in_seconds")? | tonumber | duration)
+   (. | metadata("duration_in_seconds") | if . == null then null else . | tonumber | duration end )
   ]
   | del(..|nulls)
   | map(select(length > 0))
   | join("  •  ");
 
 def superMeta:
-. | (.subTitle // (. | tostring | if . == "" then null else "????" end) // "");
+. | (.subTitle // (. | meta | if . == "" then null else . end) // "");
 
